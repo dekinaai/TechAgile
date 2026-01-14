@@ -51,7 +51,17 @@ def update_task(task_id):
     session.close()
     return jsonify({'message': 'updated'}), 200
 
-# TODO: DELETE
+@app.route('/tasks/<int:task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    session = SessionLocal()
+    task = session.query(Task).get(task_id)
+    if not task:
+        session.close()
+        return jsonify({'error': 'not found'}), 404
+    session.delete(task)
+    session.commit()
+    session.close()
+    return jsonify({'message': 'deleted'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
