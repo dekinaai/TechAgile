@@ -4,7 +4,7 @@ from models import Task, SessionLocal, engine, Base
 Base.metadata.create_all(engine)
 app = Flask(__name__)
 
-@app.route('/tasks', methogs=['GET'])
+@app.route('/tasks', methods=['GET'])
 def list_tasks():
     session = SessionLocal()
     tasks = session.query(Task).all()
