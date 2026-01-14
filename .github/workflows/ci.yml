@@ -5,6 +5,8 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  PYTHONPATH: $(pwd)
 
 jobs:
   test:
