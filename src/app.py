@@ -35,7 +35,23 @@ def create_task():
     session.close()
     return jsonify({'id': task.id}), 201
 
-# TODO: PUT e DELETE
+@app.route('/tasks/<int:task_id>', methods=['PUT'])
+def update_task(task_id):
+    data = request.get_json() or {}
+    session = SessionLocal()
+    task = session.query(Task).get(task_id)
+    if not task:
+        session.close()
+        return jsonify({'error': 'not found'}), 404
+    task.title =        data.get('title',        task.title)
+    task.description =  data.get('description',  task.description)
+    task.status =       data.get('status',       task.status)
+    task.priority =     data.get('priority',     task.priority)
+    session.commit()
+    session.close()
+    return jsonify({'message': 'updated'}), 200
+
+# TODO: DELETE
 
 if __name__ == '__main__':
     app.run(debug=True)
