@@ -21,7 +21,21 @@ def list_tasks():
     session.close()
     return jsonify(result), 200
 
-# TODO: POST, PUT e DELETE
+@app.route('/tasks', methods=['POST'])
+def create_task():
+    data = request.get_json() or {}
+    title = data.get('title')
+    if not title:
+        return jsonify({'error': 'title required'}), 400
+    session = SessionLocal()
+    task = Task(title=title, description=data.get('description'), priority=data.get('priority', 3))
+    session.add(task)
+    session.commit()
+    session.refresh(task)
+    session.close()
+    return jsonify({'id': task.id}), 201
+
+# TODO: PUT e DELETE
 
 if __name__ == '__main__':
     app.run(debug=True)
