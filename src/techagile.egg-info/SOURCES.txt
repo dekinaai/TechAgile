@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/__init__.py
+src/app.py
+src/models.py
+src/techagile.egg-info/PKG-INFO
+src/techagile.egg-info/SOURCES.txt
+src/techagile.egg-info/dependency_links.txt
+src/techagile.egg-info/top_level.txt
+tests/test_tasks.py
