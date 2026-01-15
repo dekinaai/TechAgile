@@ -1,8 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from models import Task, SessionLocal, engine, Base
 
 Base.metadata.create_all(engine)
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates")
+
+@app.route('/', methods=['GET'])
+def home():
+    return render_template('index.html')
 
 @app.route('/tasks', methods=['GET'])
 def list_tasks():

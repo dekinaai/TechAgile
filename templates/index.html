@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>TechAgile</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title mb-4">TechAgile</h3>
+
+            <!-- Formulário -->
+            <form id="task-form" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" id="title" class="form-control" placeholder="Título" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" id="description" class="form-control" placeholder="Descrição">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">Adicionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de tarefas -->
+    <div class="card mt-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Tarefas</h5>
+
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descrição</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="task-table"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadTasks() {
+    const response = await fetch("/tasks");
+    const tasks = await response.json();
+
+    const table = document.getElementById("task-table");
+    table.innerHTML = "";
+
+    tasks.forEach(task => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${task.title}</td>
+            <td>${task.description || ""}</td>
+            <td>${task.status}</td>
+	    <td>
+    		<button class="btn btn-sm btn-warning me-1" onclick="editTask(${task.id})">
+    		    Editar
+    		</button>
+    		<button class="btn btn-sm btn-danger" onclick="deleteTask(${task.id})">
+		    Excluir
+		</button>
+	    </td>
+        `;
+
+        table.appendChild(row);
+    });
+}
+
+async function deleteTask(id) {
+    await fetch(`/tasks/${id}`, { method: "DELETE" });
+    loadTasks();
+}
+
+document.getElementById("task-form").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const data = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+    };
+
+    if (editingId) {
+        await fetch(`/tasks/${editingId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+        editingId = null;
+        document.querySelector("#task-form button").textContent = "Adicionar";
+    } else {
+        await fetch("/tasks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+    }
+
+    e.target.reset();
+    loadTasks();
+});
+
+loadTasks();
+
+let editingId = null;
+
+async function editTask(id) {
+    const response = await fetch("/tasks");
+    const tasks = await response.json();
+    const task = tasks.find(t => t.id === id);
+
+    if (!task) return;
+
+    editingId = id;
+
+    document.getElementById("title").value = task.title;
+    document.getElementById("description").value = task.description || "";
+
+    document.querySelector("#task-form button").textContent = "Atualizar";
+}
+</script>
+
+</body>
+</html>
+
