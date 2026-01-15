@@ -18,6 +18,7 @@ def list_tasks():
                 'title':        t.title,
                 'description':  t.description,
                 'status':       t.status,
+                'priority':     t.priority,
                 'created_at':   t.created_at.isoformat()
             } for t in tasks
              ]
@@ -31,7 +32,7 @@ def create_task():
     if not title:
         return jsonify({'error': 'title required'}), 400
     session = SessionLocal()
-    task = Task(title=title, description=data.get('description'))
+    task = Task(title=title, description=data.get('description'), priority=data.get('priority',3))
     session.add(task)
     session.commit()
     session.refresh(task)
@@ -49,6 +50,7 @@ def update_task(task_id):
     task.title =        data.get('title',        task.title)
     task.description =  data.get('description',  task.description)
     task.status =       data.get('status',       task.status)
+    task.priority =     data.get('priority',     task.priority)
     session.commit()
     session.close()
     return jsonify({'message': 'updated'}), 200

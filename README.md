@@ -22,4 +22,16 @@ pytest -q
 
 **Workflow CI** (GitHub Actions): O workflow executa: instalação de dependências e execução de testes com pytest.
 
+## Mudança de escopo
 
+Alteração: Adicionar campo priority às tarefas.
+
+Justificativa: O cliente necessita priorizar entregas e distinguir tarefas críticas de tarefas rotineiras em sua operação logística.
+
+Impacto: Alteração no modelo de dados, atualizações nas APIs e UI, necessidade de atualização de testes e documentação.
+
+Ações executadas:
+
+Atualização do modelo Task (+priority).
+
+Inclusão de testes cobrindo priority.
